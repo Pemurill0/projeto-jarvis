@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JarvisBots - SaaS WhatsApp Bot Creator</title>
+    <meta name="description" content="Plataforma SaaS para criar e gerenciar robôs inteligentes de WhatsApp com IA, automação e segurança anti-ban.">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- SIDEBAR / MENU LATERAL -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-logo">J</div>
+                <h1 class="brand-title">JarvisBots</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-view="view-dashboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Painel Geral
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-view="view-usuarios">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Gestão de Usuários
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-view="view-comandos">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        Gestão de Comandos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-view="view-bots">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M12 2v9"></path><path d="M8 5h8"></path></svg>
+                        Fábrica de Bots
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-view="view-chat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        Chat de Teste
+                    </a>
+                </li>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="sidebar-footer-btn" id="btn-reset-data">
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                    Resetar Dados Simulados
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay para fechar sidebar mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            
+            <!-- HEADER / TOPO -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="hamburger-btn" id="btn-hamburger">
+                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h2 class="header-title" id="page-title">Painel Geral</h2>
+                </div>
+                
+                <div class="stats-bar">
+                    <div class="stat-quick">
+                        <span>Clientes:</span>
+                        <span class="stat-quick-val" id="quick-total-users">0</span>
+                    </div>
+                    <div class="stat-quick">
+                        <span>Bots Ativos:</span>
+                        <span class="stat-quick-val" id="quick-total-bots">0</span>
+                    </div>
+                    <div class="stat-quick">
+                        <span>Msg Totais:</span>
+                        <span class="stat-quick-val" id="quick-total-msgs">0/0</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ==========================================
+                 VIEW 1: PAINEL GERAL (DASHBOARD)
+                 ========================================== -->
+            <section class="view-container active" id="view-dashboard">
+                <!-- Linha 1: Cards de Resumo -->
+                <div class="dashboard-grid">
+                    <div class="card-glass summary-card">
+                        <div class="summary-icon">
+                            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div class="summary-info">
+                            <h3>Total de Clientes</h3>
+                            <p id="dash-total-clientes">0</p>
+                        </div>
+                    </div>
+                    <div class="card-glass summary-card">
+                        <div class="summary-icon cyan">
+                            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M12 2v9"></path></svg>
+                        </div>
+                        <div class="summary-info">
+                            <h3>Robôs WhatsApp</h3>
+                            <p id="dash-total-bots">0</p>
+                        </div>
+                    </div>
+                    <div class="card-glass summary-card">
+                        <div class="summary-icon emerald">
+                            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <div class="summary-info">
+                            <h3>Status Faturamento</h3>
+                            <p id="dash-faturamento">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linha 2: Cards Secundários -->
+                <div class="dashboard-grid-secondary">
+                    <!-- Uso de Mensagens + Status de Clientes -->
+                    <div class="card-glass">
+                        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">📊 Uso de Mensagens</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 0;">Consumo estimado do plano neste ciclo.</p>
+                        <div class="progress-section" id="dash-msg-progress">
+                            <!-- Populado dinamicamente -->
+                        </div>
+
+                        <h3 style="font-size: 15px; font-weight: 700; margin-top: 28px; margin-bottom: 4px;">👥 Clientes por Status</h3>
+                        <p style="font-size: 12px; color: var(--text-muted);">Distribuição de assinaturas ativas, trial e inativas.</p>
+                        <div class="status-chart" id="dash-status-chart">
+                            <!-- Populado dinamicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Atividades Recentes -->
+                    <div class="card-glass">
+                        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 16px;">⚡ Atividades Recentes</h3>
+                        <div class="activity-timeline" id="dash-activity-timeline">
+                            <!-- Populado dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linha 3: Agendamentos + Anti-Ban -->
+                <div class="dashboard-grid-secondary">
+                    <!-- Próximos Agendamentos -->
+                    <div class="card-glass">
+                        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">📅 Próximos Agendamentos</h3>
+                        <p style="font-size: 12px; color: var(--text-muted);">Os próximos envios automáticos configurados.</p>
+                        <div class="scheduler-list" id="dash-schedulers">
+                            <!-- Populado dinamicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Dicas Anti-Ban -->
+                    <div class="card-glass antiban-card">
+                        <div class="antiban-header">
+                            <div class="antiban-header-icon">🛡️</div>
+                            <h4>Proteção Anti-Banimento</h4>
+                        </div>
+                        <div class="antiban-tips">
+                            <div class="antiban-tip">
+                                <div class="antiban-tip-icon">✓</div>
+                                <span>Delay humanizado entre respostas (1-3s de variação aleatória simulando digitação).</span>
+                            </div>
+                            <div class="antiban-tip">
+                                <div class="antiban-tip-icon">✓</div>
+                                <span>Limite de mensagens por minuto controlado para evitar flood e detecção de bot.</span>
+                            </div>
+                            <div class="antiban-tip">
+                                <div class="antiban-tip-icon">✓</div>
+                                <span>Respostas com variação de texto (não enviar mensagens idênticas repetidamente).</span>
+                            </div>
+                            <div class="antiban-tip">
+                                <div class="antiban-tip-icon">✓</div>
+                                <span>Indicador "digitando..." antes de responder, simulando comportamento humano real.</span>
+                            </div>
+                            <div class="antiban-tip">
+                                <div class="antiban-tip-icon">✓</div>
+                                <span>Horários de operação configuráveis — bot silencioso de madrugada para evitar suspeitas.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 2: GESTÃO DE USUÁRIOS
+                 ========================================== -->
+            <section class="view-container" id="view-usuarios">
+                <div class="card-glass">
+                    <div class="table-header-row">
+                        <div class="search-input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" class="search-input" id="search-users" placeholder="Buscar cliente por nome ou celular...">
+                        </div>
+                        <div class="table-header-actions">
+                            <button class="btn btn-outline" id="btn-export-clients" title="Exportar clientes para CSV">
+                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Exportar CSV
+                            </button>
+                            <button class="btn btn-primary" id="btn-add-client">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                Novo Cliente
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table" id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>WhatsApp</th>
+                                    <th>Status Assinatura</th>
+                                    <th>Limite Mensagens</th>
+                                    <th>Data Vencimento</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Inserido dinamicamente via app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 3: GESTÃO DE COMANDOS
+                 ========================================== -->
+            <section class="view-container" id="view-comandos">
+                <div class="card-glass">
+                    <div class="table-header-row">
+                        <div class="search-input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" class="search-input" id="search-commands" placeholder="Buscar gatilho do comando...">
+                        </div>
+                        <div class="table-header-actions">
+                            <button class="btn btn-outline" id="btn-export-commands" title="Exportar comandos para CSV">
+                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Exportar CSV
+                            </button>
+                            <button class="btn btn-primary" id="btn-add-command">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                Adicionar Comando
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table" id="commands-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Palavra-Chave / Gatilho</th>
+                                    <th>Resposta de Texto</th>
+                                    <th>Ação de Webhook (URL)</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Inserido dinamicamente via app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 4: FÁBRICA DE BOTS (GERADOR)
+                 ========================================== -->
+            <section class="view-container" id="view-bots">
+                <div class="bot-factory-header">
+                    <div>
+                        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Gerenciar Instâncias de Robôs</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary);">Crie e conecte robôs de WhatsApp específicos para seus clientes.</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-generate-bot">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Gerar BOT de WhatsApp
+                    </button>
+                </div>
+
+                <div class="bots-grid" id="bots-container">
+                    <!-- Inserido dinamicamente via app.js -->
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 5: CHAT DE TESTE (SIMULADOR)
+                 ========================================== -->
+            <section class="view-container" id="view-chat">
+                <div class="chat-wrapper">
+                    <!-- Barra de Bots Conectados -->
+                    <div class="chat-sidebar">
+                        <div class="chat-sidebar-header">
+                            <h3>Robôs Ativos</h3>
+                            <p style="font-size: 12px; color: var(--text-secondary);">Selecione um bot conectado para iniciar a simulação de chat do WhatsApp.</p>
+                        </div>
+                        <div class="chat-bot-list" id="chat-bot-list">
+                            <!-- Inserido dinamicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Janela de Chat Ativo -->
+                    <div class="chat-window" id="chat-window">
+                        <!-- Estado Vazio -->
+                        <div class="chat-window-placeholder" id="chat-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <h3>Selecione um Robô</h3>
+                            <p style="font-size: 13px; max-width: 300px; margin-top: 8px;">Você precisa de pelo menos um bot com status "Conectado" para poder conversar e simular o fluxo.</p>
+                        </div>
+
+                        <!-- Tela com mensagens ativa -->
+                        <div id="chat-active-screen" style="display: none; flex-direction: column; height: 100%; width: 100%;">
+                            <div class="chat-window-header">
+                                <div class="chat-window-header-avatar" id="chat-header-avatar">B</div>
+                                <div class="chat-window-header-info">
+                                    <h4 id="chat-header-name">Nome do Bot</h4>
+                                    <span id="chat-header-status">Simulação WhatsApp Ativa</span>
+                                </div>
+                                <div class="chat-header-controls" style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+                                    <div class="form-group-horizontal" style="display: flex; align-items: center; gap: 6px; margin: 0;">
+                                        <label for="chat-type-select" style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 0;">Chat:</label>
+                                        <select class="form-control-sm" id="chat-type-select">
+                                            <option value="private">Privado 👤</option>
+                                            <option value="group">Grupo VIP 👥</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group-horizontal" id="chat-sender-wrapper" style="display: none; align-items: center; gap: 6px; margin: 0;">
+                                        <label for="chat-sender-select" style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 0;">Como:</label>
+                                        <select class="form-control-sm" id="chat-sender-select">
+                                            <!-- Populado dinamicamente -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-messages-container" id="chat-messages-box">
+                                <!-- Balões de conversa dinâmicos -->
+                            </div>
+                            
+                            <div class="chat-input-bar">
+                                <div class="chat-reply-bar" id="chat-reply-bar">
+                                    <div class="chat-reply-info">
+                                        Respondendo a <strong id="chat-reply-author" style="color: var(--accent-primary-hover);">Nome</strong>: <span id="chat-reply-text" style="font-style: italic; color: var(--text-muted);">"Mensagem..."</span>
+                                    </div>
+                                    <button type="button" id="btn-cancel-reply" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                </div>
+                                <form class="chat-form" id="chat-form">
+                                    <button type="button" class="chat-event-btn" id="btn-open-event-modal" title="Criar Evento no WhatsApp" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-primary); cursor: pointer; display: none; align-items: center; justify-content: center; width: 38px; height: 38px; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    </button>
+                                    <input type="text" class="chat-message-input" id="chat-message-input" placeholder="Digite uma mensagem ou gatilho (ex: /ajuda)..." required autocomplete="off">
+                                    <button type="submit" class="chat-send-btn">
+                                        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+        
+    </div>
+
+    <!-- ==========================================
+         MODAL: ADICIONAR / EDITAR CLIENTE
+         ========================================== -->
+    <div class="modal-overlay" id="modal-client">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-client-title">Adicionar Novo Cliente</h3>
+                <button class="btn-close-modal" data-close="modal-client">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-client">
+                <input type="hidden" id="client-id">
+                <div class="form-group">
+                    <label for="client-name">Nome Completo</label>
+                    <input type="text" class="form-control" id="client-name" required placeholder="Ex: Pedro Henrique">
+                </div>
+                <div class="form-group">
+                    <label for="client-whatsapp">WhatsApp (com DDD)</label>
+                    <input type="text" class="form-control" id="client-whatsapp" required placeholder="Ex: 11999998888">
+                </div>
+                <div class="form-group">
+                    <label for="client-status">Status da Assinatura</label>
+                    <select class="form-control" id="client-status" required>
+                        <option value="Ativo">Ativo</option>
+                        <option value="Trial">Trial</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="client-limit">Limite de Mensagens</label>
+                    <input type="number" class="form-control" id="client-limit" required min="0" placeholder="Ex: 5000">
+                </div>
+                <div class="form-group">
+                    <label for="client-expiry">Data de Vencimento</label>
+                    <input type="date" class="form-control" id="client-expiry" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modal-client">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL: ADICIONAR / EDITAR COMANDO
+         ========================================== -->
+    <div class="modal-overlay" id="modal-command">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-command-title">Criar Comando do Bot</h3>
+                <button class="btn-close-modal" data-close="modal-command">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-command">
+                <input type="hidden" id="command-id">
+                <div class="form-group">
+                    <label for="command-trigger">Palavra-Chave / Gatilho</label>
+                    <input type="text" class="form-control" id="command-trigger" required placeholder="Ex: /ajuda ou /relatorio">
+                </div>
+                <div class="form-group">
+                    <label for="command-response">Resposta do Robô (Texto)</label>
+                    <textarea class="form-control" id="command-response" placeholder="Mensagem de texto a ser enviada pelo Bot de WhatsApp..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="command-webhook">Ação do Webhook (URL Opcional)</label>
+                    <input type="url" class="form-control" id="command-webhook" placeholder="Ex: https://n8n.exemplo.com/webhook/123">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modal-command">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Comando</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL: GERAR BOT DE WHATSAPP
+         ========================================== -->
+    <div class="modal-overlay" id="modal-bot">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Gerar BOT de WhatsApp</h3>
+                <button class="btn-close-modal" data-close="modal-bot">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-bot">
+                <div class="form-group">
+                    <label for="bot-name">Nome do Bot</label>
+                    <input type="text" class="form-control" id="bot-name" required placeholder="Ex: Atendimento Vendas">
+                </div>
+                <div class="form-group">
+                    <label for="bot-client">Cliente Vinculado</label>
+                    <select class="form-control" id="bot-client" required>
+                        <!-- Populado dinamicamente com os clientes cadastrados -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bot-prompt">Prompt do Sistema (Personalidade da IA)</label>
+                    <textarea class="form-control" id="bot-prompt" required placeholder="Você é o assistente virtual de vendas. Seja educado, tire dúvidas sobre planos e envie o link de checkout..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modal-bot">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar e Inicializar Instância</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL: QR CODE (CONECTAR WHATSAPP)
+         ========================================== -->
+    <div class="modal-overlay" id="modal-qrcode">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Escaneie o QR Code</h3>
+                <button class="btn-close-modal" data-close="modal-qrcode">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="qrcode-modal-body">
+                <p style="font-size: 13px; color: var(--text-secondary); max-width: 360px;">
+                    Abra o WhatsApp no seu aparelho, vá em Dispositivos Conectados e escaneie o código abaixo para ativar a instância: <strong id="qrcode-bot-name">Nome do Bot</strong>.
+                </p>
+                
+                <div class="qrcode-container">
+                    <div class="qrcode-scanner-line"></div>
+                    <!-- Gerando um SVG de QR Code simulado no container -->
+                    <svg class="qrcode-image" viewBox="0 0 24 24" fill="black">
+                        <path d="M3 3h6v6H3zm2 2v2h2V5zm8-2h6v6h-6zm2 2v2h2V5zM3 15h6v6H3zm2 2v2h2v-2zm13-2h2v2h-2zm2 2h2v4h-2zm-4 2h2v2h-2zm4-6h2v2h-2zm-4-4h2v6h-2zm-2 2h2v2h-2zm-2 2h2v2h-2zm2 2h2v2h-2z" />
+                    </svg>
+                </div>
+
+                <div class="qrcode-status-message loading" id="qrcode-status-text">
+                    Aguardando leitura do QR Code pelo celular...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL: CRIAR EVENTO WHATSAPP (AGENDAMENTO NATIVO)
+         ========================================== -->
+    <div class="modal-overlay" id="modal-event-whatsapp">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Criar Evento no WhatsApp</h3>
+                <button class="btn-close-modal" data-close="modal-event-whatsapp">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-event-whatsapp">
+                <div class="form-group">
+                    <label for="event-title">Nome do Evento (Comando de Agendamento)</label>
+                    <select class="form-control" id="event-title" required>
+                        <option value=".agendar">.agendar (Execução Única)</option>
+                        <option value=".agendar.diario">.agendar.diario (Diário)</option>
+                        <option value=".agendar.semanal">.agendar.semanal (Semanal)</option>
+                        <option value=".agendar.mensal">.agendar.mensal (Mensal)</option>
+                        <option value=".agendar.anual">.agendar.anual (Anual)</option>
+                    </select>
+                    <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">Você também pode usar abreviações como .agd.d, .agd.s, etc. na digitação direta.</small>
+                </div>
+                <div class="form-group">
+                    <label for="event-description">Descrição (Mensagem ou Comando a Executar)</label>
+                    <textarea class="form-control" id="event-description" required placeholder="Ex: .nivers hoje ou Bom dia grupo! Como estão?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="event-datetime">Data e Hora de Início</label>
+                    <input type="datetime-local" class="form-control" id="event-datetime" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modal-event-whatsapp">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Criar Evento no Grupo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL: VISUALIZAR BIO DO PARTICIPANTE
+         ========================================== -->
+    <div class="modal-overlay" id="modal-bio-view">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 32px;">
+            <div class="modal-header" style="justify-content: flex-end; padding-bottom: 0; border: none; margin-bottom: -10px;">
+                <button class="btn-close-modal" data-close="modal-bio-view" style="background: none; border: none; color: var(--text-muted); cursor: pointer;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div class="bio-view-body" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                <div class="bio-avatar-container" style="position: relative; width: 100px; height: 100px;">
+                    <img id="bio-view-photo" src="" alt="Foto de Perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-primary); box-shadow: var(--shadow-neon);">
+                    <div id="bio-view-initials" style="display: none; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; align-items: center; justify-content: center; font-size: 36px; font-weight: 700;"></div>
+                </div>
+                
+                <div>
+                    <h3 id="bio-view-name" style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Nome do Participante</h3>
+                    <span id="bio-view-role" class="badge">Administrador</span>
+                </div>
+                
+                <div id="bio-view-details" style="width: 100%; display: flex; flex-direction: column; gap: 8px; text-align: left; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px; font-size: 13px;">
+                    <div>
+                        <strong style="color: var(--text-secondary);">WhatsApp:</strong>
+                        <span id="bio-view-phone" style="float: right; color: var(--text-primary);">+55 (11) 99999-8888</span>
+                    </div>
+                    <div id="bio-view-insta-row" style="display: none;">
+                        <strong style="color: var(--text-secondary);">Instagram:</strong>
+                        <span style="float: right;">
+                            <a id="bio-view-insta" href="#" target="_blank" style="color: var(--accent-secondary); text-decoration: none; font-weight: 600;">@instagram</a>
+                        </span>
+                    </div>
+                    <div id="bio-view-niver-row" style="display: none;">
+                        <strong style="color: var(--text-secondary);">Aniversário:</strong>
+                        <span id="bio-view-niver" style="float: right; color: var(--text-primary);">15/08</span>
+                    </div>
+                    <div id="bio-view-signo-row" style="display: none;">
+                        <strong style="color: var(--text-secondary);">Signo:</strong>
+                        <span id="bio-view-signo" style="float: right; color: var(--text-primary);">Leão ♌</span>
+                    </div>
+                </div>
+                
+                <div style="width: 100%; border-top: 1px solid var(--border-glass); padding-top: 16px; text-align: left;">
+                    <strong style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Biografia (Sobre mim)</strong>
+                    <p id="bio-view-text" style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; font-style: italic;">"Nenhuma informação configurada."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         CONFIRM MODAL CUSTOMIZADO
+         ========================================== -->
+    <div class="confirm-overlay" id="confirm-modal">
+        <div class="confirm-box">
+            <div class="confirm-icon" id="confirm-icon">⚠️</div>
+            <h4 class="confirm-title" id="confirm-title">Tem certeza?</h4>
+            <p class="confirm-message" id="confirm-message">Esta ação não pode ser desfeita.</p>
+            <div class="confirm-actions">
+                <button class="btn btn-secondary" id="confirm-cancel">Cancelar</button>
+                <button class="btn btn-danger" id="confirm-yes">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
