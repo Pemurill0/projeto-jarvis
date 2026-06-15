@@ -20,7 +20,7 @@ const DEFAULT_COMMANDS = [
 ];
 
 const DEFAULT_BOTS = [
-    { id_bot: 1, id_usuario: 1, nome_do_bot: "Atendente Comercial", prompt_de_personalidade: "Você é o assistente virtual de vendas. Seja sempre educado, ofereça descontos de até 10% em compras à vista e conduza o cliente para o link de checkout.", status_conexao: "Conectado" },
+    { id_bot: 1, id_usuario: 1, nome_do_bot: "Jarvis", prompt_de_personalidade: "Você é o Jarvis, assistente virtual inteligente da plataforma. Seja sempre educado, prestativo e ajude os usuários com seus comandos.", status_conexao: "Conectado" },
     { id_bot: 2, id_usuario: 2, nome_do_bot: "Suporte Técnico", prompt_de_personalidade: "Você é o suporte técnico do sistema de estética. Ajude a agendar horários, explique os procedimentos e seja paciente.", status_conexao: "Aguardando QR Code" }
 ];
 
