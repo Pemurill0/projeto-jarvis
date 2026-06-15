@@ -49,6 +49,14 @@ let db_participants = JSON.parse(localStorage.getItem("participantes_grupo")) ||
 let db_roles = JSON.parse(localStorage.getItem("roles_grupo")) || DEFAULT_ROLES;
 let db_schedulers = JSON.parse(localStorage.getItem("agendamentos_grupo")) || DEFAULT_SCHEDULERS;
 
+// Migração: Renomeia o bot padrão antigo se ele ainda estiver no localStorage
+let defaultBot = db_bots.find(b => b.id_bot === 1 && b.nome_do_bot === "Atendente Comercial");
+if (defaultBot) {
+    defaultBot.nome_do_bot = "Jarvis";
+    defaultBot.prompt_de_personalidade = "Você é o Jarvis, assistente virtual inteligente da plataforma. Seja sempre educado, prestativo e ajude os usuários com seus comandos.";
+    localStorage.setItem("instancias_bots", JSON.stringify(db_bots));
+}
+
 // Estado na memória para mensagens do chat simulado
 let chat_messages = {}; // id_bot -> Array de mensagens
 
