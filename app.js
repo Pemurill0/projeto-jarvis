@@ -1422,17 +1422,16 @@ const sendMessageFromAdmin = (text) => {
             });
         } else {
             const query = text.toLowerCase().trim();
-            const prompt = bot.prompt_de_personalidade;
+            const botName = bot.nome_do_bot.toLowerCase();
+            const activeName = activeParticipant ? activeParticipant.nome : "Membro";
             
-            if (query.includes("plano") || query.includes("preço") || query.includes("valor") ||
-                query.includes("venda") || query.includes("comprar") || query.includes("desconto")) {
+            // Verifica se a mensagem menciona o bot, se direciona a ele ou se é uma resposta direta a ele
+            const mentionsBot = query.includes("jarvis") || query.includes(botName) || query.includes("bot");
+            const isReplyToBot = quotedMessageId && chat_messages[botId].find(m => m.messageId === quotedMessageId)?.senderPhone === "bot";
+
+            if (mentionsBot || isReplyToBot) {
                 sendBotResponseWithDelay(botId, () => {
-                    let botResponse = "";
-                    if (query.includes("plano") || query.includes("preço") || query.includes("valor")) {
-                        botResponse = `🤖 Vi que perguntou sobre preços/planos, @${activeParticipant ? activeParticipant.nome : 'Membro'}.\n\nNossos planos começam a partir de R$ 199,90/mês. Digite /ajuda para mais opções.`;
-                    } else {
-                        botResponse = `🤖 Oi @${activeParticipant ? activeParticipant.nome : 'Membro'}! Posso te oferecer até 10% de desconto para fechamentos via PIX hoje.`;
-                    }
+                    const botResponse = generateSmartAIResponse(bot, text, activeName);
                     chat_messages[botId].push({
                         sender: "received",
                         senderName: bot.nome_do_bot,
@@ -1445,6 +1444,71 @@ const sendMessageFromAdmin = (text) => {
             }
         }
     }
+};
+
+const generateSmartAIResponse = (bot, userText, senderName = "usuário") => {
+    const query = userText.toLowerCase().trim();
+    const prompt = bot.prompt_de_personalidade;
+    const botName = bot.nome_do_bot;
+
+    // Detecta cumprimentos gerais e perguntas de cortesia
+    const hasGreeting = /\b(oi|ola|olá|bom dia|boa tarde|boa noite|e ai|e aí|opa|hello|hi)\b/i.test(query);
+    const hasHowAreYou = /\b(tudo bem|tudo bom|como vai|como voce esta|como você está|tudo e vc|tudo e você|tudo certinho)\b/i.test(query);
+    const hasThanks = /\b(obrigado|obrigada|valeu|agradeço|agradecido|perfeito|show|legal|tamo junto)\b/i.test(query);
+    const isWhoAreYou = /\b(quem e voce|quem é você|o que voce faz|o que você faz|seu nome|quem e tu|quem é tu)\b/i.test(query);
+
+    // Palavras-chave de negócio
+    const isPricing = /\b(plano|preço|preco|valor|mensalidade|custo|pagar|pagamento|assinatura|assinar)\b/i.test(query);
+    const isSales = /\b(comprar|venda|desconto|cupom|fechar|pix|checkout|quero comprar)\b/i.test(query);
+
+    // Respostas personalizadas
+    if (query.includes("bom dia") && (query.includes("tudo bem") || query.includes("tudo e vc") || query.includes("tudo e você"))) {
+        return `🤖 Bom dia! Tudo ótimo por aqui, e com você? Como posso te ajudar hoje?`;
+    }
+
+    if (hasGreeting && hasHowAreYou) {
+        return `🤖 Olá! Tudo ótimo por aqui, e com você? Como posso te ajudar hoje? 😊`;
+    }
+
+    if (hasGreeting) {
+        let period = "Olá";
+        if (query.includes("bom dia")) period = "Bom dia";
+        else if (query.includes("boa tarde")) period = "Boa tarde";
+        else if (query.includes("boa noite")) period = "Boa noite";
+        
+        return `🤖 ${period}, @${senderName}! Tudo bem? Como posso te ajudar hoje?`;
+    }
+
+    if (hasHowAreYou) {
+        return `🤖 Tudo ótimo por aqui, @${senderName}, obrigado por perguntar! E com você, tudo bem? Em que posso ser útil?`;
+    }
+
+    if (isWhoAreYou) {
+        return `🤖 Eu sou o *${botName}*, assistente virtual inteligente regido pela personalidade:\n👉 _"${prompt}"_\n\nEstou aqui para tirar suas dúvidas e automatizar processos no grupo e no privado!`;
+    }
+
+    if (isPricing) {
+        return `🤖 Nossos planos de Bots de WhatsApp começam a partir de R$ 199,90/mês. Eles incluem suporte completo, relatórios e proteção anti-ban. Gostaria de receber o link de assinatura?`;
+    }
+
+    if (isSales) {
+        return `🤖 Excelente! Atuando sob minhas diretrizes de negócio ("${prompt}"), posso liberar até 10% de desconto para fechamentos via PIX realizados hoje. Vamos fechar?`;
+    }
+
+    if (hasThanks) {
+        return `🤖 Por nada, @${senderName}! Qualquer dúvida é só chamar. Tamo junto! 👍`;
+    }
+
+    // Resposta padrão simulando a inteligência com base no prompt
+    let response = `🤖 [Simulação de IA - ${botName}]: Olá @${senderName}!\n\nEntendi sua mensagem: "${userText}".\n\nComo assistente inteligente regido por: _"${prompt}"_, estou à disposição para te ajudar. Pode fazer perguntas de suporte ou vendas diretamente!`;
+
+    if (prompt.toLowerCase().includes("venda") || prompt.toLowerCase().includes("comercial") || prompt.toLowerCase().includes("checkout")) {
+        response = `🤖 Olá @${senderName}! Como assistente comercial do canal, estou aqui para esclarecer dúvidas sobre nossos produtos e te ajudar com a contratação. Em que posso ajudar?`;
+    } else if (prompt.toLowerCase().includes("suporte") || prompt.toLowerCase().includes("técnico")) {
+        response = `🤖 Olá @${senderName}! Como suporte técnico, estou aqui para te ajudar com agendamentos e tirar dúvidas sobre procedimentos. Qual a sua dúvida?`;
+    }
+
+    return response;
 };
 
 const processBotResponse = (botId, userText) => {
@@ -1473,14 +1537,7 @@ const processBotResponse = (botId, userText) => {
         }
         logActivity(`Comando "${matchedCommand.palavra_gatilho}" acionado no chat.`, "command");
     } else {
-        const prompt = bot.prompt_de_personalidade;
-        let botResponse = `🤖 Recebi sua mensagem: "${userText}".\n\nEstou atuando sob as seguintes diretrizes de personalidade:\n👉 "${prompt}"\n\nDigite um comando configurado (ex: /ajuda) para ver as opções.`;
-        
-        if (query.includes("plano") || query.includes("preço") || query.includes("valor")) {
-            botResponse = `🤖 Percebi que você perguntou sobre planos/preços.\n\nCom base nas minhas regras ("${prompt}"), nossos planos começam a partir de R$ 199,90/mês. Gostaria de receber o link?`;
-        } else if (query.includes("venda") || query.includes("comprar") || query.includes("desconto")) {
-            botResponse = `🤖 Entendi seu interesse!\n\nDe acordo com minhas instruções ("${prompt}"), posso oferecer até 10% de desconto para fechamentos via PIX hoje. Vamos prosseguir?`;
-        }
+        const botResponse = generateSmartAIResponse(bot, userText, "Cliente");
 
         chat_messages[botId].push({
             sender: "received",
