@@ -16,7 +16,20 @@ const DEFAULT_CLIENTS = [
 const DEFAULT_COMMANDS = [
     { id: 1, palavra_gatilho: "/ajuda", resposta_texto: "Olá! Como posso te ajudar? Digite uma das opções:\n1. Falar com atendente\n2. Ver nossos planos\n3. Cancelar assinatura", acao_webhook: "" },
     { id: 2, palavra_gatilho: "/relatorio", resposta_texto: "Seu relatório de mensagens foi gerado com sucesso pelo bot e enviado para o painel principal.", acao_webhook: "https://n8n.exemplo.com/webhook/disparar-relatorio" },
-    { id: 3, palavra_gatilho: "/link", resposta_texto: "Aqui está o link para acesso ao nosso portal financeiro: https://jarvisbots.com/financeiro", acao_webhook: "" }
+    { id: 3, palavra_gatilho: "/link", resposta_texto: "Aqui está o link para acesso ao nosso portal financeiro: https://jarvisbots.com/financeiro", acao_webhook: "" },
+    { id: 4, palavra_gatilho: ".meusdados", resposta_texto: "Retorna as estatísticas do participante no grupo (mensagens enviadas, reações, advertências, instagram, aniversário, signo).", acao_webhook: "" },
+    { id: 5, palavra_gatilho: ".bio", resposta_texto: "Exibe ou atualiza sua biografia/foto de perfil no grupo. Uso: .bio <texto> ou .bio foto <URL>.", acao_webhook: "" },
+    { id: 6, palavra_gatilho: ".niver", resposta_texto: "Configura seu aniversário no grupo. Uso: .niver DD/MM.", acao_webhook: "" },
+    { id: 7, palavra_gatilho: ".niver.excluir", resposta_texto: "Exclui seu aniversário da lista do grupo.", acao_webhook: "" },
+    { id: 8, palavra_gatilho: ".nivers", resposta_texto: "Lista os aniversariantes. Uso: .nivers (mês atual), .nivers hoje (hoje), .nivers ano (ano todo).", acao_webhook: "" },
+    { id: 9, palavra_gatilho: ".signos", resposta_texto: "Lista a relação de signos do zodíaco dos integrantes do grupo que cadastraram aniversário.", acao_webhook: "" },
+    { id: 10, palavra_gatilho: ".ig", resposta_texto: "Exibe os Instagrams cadastrados ou cadastra o seu. Uso: .ig ou .ig @usuario.", acao_webhook: "" },
+    { id: 11, palavra_gatilho: ".ig.excluir", resposta_texto: "Remove seu Instagram da lista do grupo.", acao_webhook: "" },
+    { id: 12, palavra_gatilho: ".role.criar", resposta_texto: "Cria um novo evento/rolê no grupo. Uso: .role.criar <descrição> [data: DD/MM/AAAA HH:MM] [imagem: URL].", acao_webhook: "" },
+    { id: 13, palavra_gatilho: ".role.alterar", resposta_texto: "Altera a descrição de um rolê. Uso: .role.alterar <código> <nova descrição> ou cite o evento e digite .role.alterar <nova descrição>.", acao_webhook: "" },
+    { id: 14, palavra_gatilho: ".role.excluir", resposta_texto: "Exclui um rolê do grupo pelo código. Uso: .role.excluir <código>.", acao_webhook: "" },
+    { id: 15, palavra_gatilho: ".agendamentos", resposta_texto: "Lista todos os agendamentos de mensagens ativos do grupo.", acao_webhook: "" },
+    { id: 16, palavra_gatilho: ".agendamento.excluir", resposta_texto: "Remove um agendamento do grupo pelo código. Uso: .agendamento.excluir <código>.", acao_webhook: "" }
 ];
 
 const DEFAULT_BOTS = [
@@ -55,6 +68,22 @@ if (defaultBot) {
     defaultBot.nome_do_bot = "Jarvis";
     defaultBot.prompt_de_personalidade = "Você é o Jarvis, assistente virtual inteligente da plataforma. Seja sempre educado, prestativo e ajude os usuários com seus comandos.";
     localStorage.setItem("instancias_bots", JSON.stringify(db_bots));
+}
+
+// Migração: Adiciona comandos de grupo se não existirem no localStorage
+let commandMigrated = false;
+DEFAULT_COMMANDS.forEach(defaultCmd => {
+    if (!db_commands.some(c => c.palavra_gatilho === defaultCmd.palavra_gatilho)) {
+        db_commands.push(defaultCmd);
+        commandMigrated = true;
+    }
+});
+if (commandMigrated) {
+    // Reordenar IDs para manter consistência
+    db_commands.forEach((c, index) => {
+        c.id = index + 1;
+    });
+    localStorage.setItem("comandos_bot", JSON.stringify(db_commands));
 }
 
 // Estado na memória para mensagens do chat simulado
@@ -725,8 +754,8 @@ const setupCommandsView = () => {
         const response = document.getElementById("command-response").value;
         const webhook = document.getElementById("command-webhook").value.trim();
 
-        // Força o gatilho a começar com / caso não tenha
-        if (!trigger.startsWith("/") && trigger.length > 0) {
+        // Força o gatilho a começar com / ou . caso não tenha
+        if (!trigger.startsWith("/") && !trigger.startsWith(".") && trigger.length > 0) {
             trigger = "/" + trigger;
         }
 
